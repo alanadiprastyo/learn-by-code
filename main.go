@@ -1,57 +1,50 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"net"
+	"net/http"
 
 	"github.com/alanadiprastyo/learn-by-code/kube"
+	"github.com/c-robinson/iplib"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 
-	// key value [key] : [value]
-	// myMap := make(map[string]string)
+	router := gin.Default()
+	router.POST("/ips", func(c *gin.Context) {
+		// ips := new(kube.IpAddress)
 
-	// myMap["name"] = "Alan"
-	// myMap["kota"] = "Depok"
+		// ips.Ip = c.PostForm("ip")
+		// ips.Netmask, _ = strconv.Atoi(c.PostForm("netmask"))
+		// ips.Count, _ = strconv.Atoi(c.PostForm("count"))
 
-	//Map tanpa make
-	// myMap := map[string]string{
-	// 	"nama": "Alan",
-	// 	"kota": "Depok",
-	// }
+		var ips kube.IpAddress
+		c.BindJSON(&ips)
 
-	// map dengan interface kosong
-	// makanan := map[string]interface{}{
-	// 	"nama":  "nasi goreng",
-	// 	"harga": 15000,
-	// 	"komposisi": map[string]string{
-	// 		"gurih": "micin",
-	// 		"pedas": "cabe",
-	// 		"manis": "kecap",
-	// 	},
-	// }
+		//debug trace data
+		//fmt.Println(ips.Ip, ips.Netmask, count)
 
-	// fmt.Println(fmt.Sprintf("menu makan siang hari ini adalah %s dengan harga %d dimana komposisinya adalah %s, %s, %s",
-	// 	makanan["nama"],
-	// 	makanan["harga"],
-	// 	makanan["komposisi"].(map[string]string)["gurih"],
-	// 	makanan["komposisi"].(map[string]string)["pedas"],
-	// 	makanan["komposisi"].(map[string]string)["manis"],
-	// ))
+		//initial variable slice interface
+		var totalIp []interface{}
 
-	name, harga, err := kube.Makanan()
-	if err != nil {
-		log.Println(err)
-	} else {
-		fmt.Println(fmt.Sprintf("makanan hari ini adalah %s dengan harga %d", name, harga))
-	}
+		for i := 1; i <= ips.Count; i++ {
+			ipa := net.ParseIP(ips.Ip)
+			ip4 := iplib.NewNet4(ipa, ips.Netmask)
+			bAddr := ip4.BroadcastAddress()
+			newIp := iplib.NextIP(bAddr)
+			newNetwork := iplib.NewNet4(newIp, ips.Netmask)
+			ips.Ip = newIp.String()
+			//fmt.Println(newNetwork.String())
+			totalIp = append(totalIp, newNetwork.String())
+		}
 
-	age, err := kube.Umur(1995)
+		response := gin.H{
+			"Network": totalIp,
+		}
 
-	if err != nil {
-		log.Println(err)
-	} else {
-		fmt.Println(fmt.Sprintf("umurnya adalah %d tahun", age))
-	}
+		c.JSON(http.StatusOK, response)
+	})
+
+	router.Run("localhost:8080")
 }
