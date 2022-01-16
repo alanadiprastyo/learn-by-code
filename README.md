@@ -25,6 +25,7 @@ Resource scope: variable, struct, function
 PR :
 - Gin-Gonic - Buat sebauh method POST menerima argument pertama IP, kedua netmask, ketiga jumlah banyaknya next subnet.
   kemudian return value berupa json
+```
   {
       "ip": "192.168.10.0"
       "netmask": "24"
@@ -37,5 +38,9 @@ result
     "ip": "192.168.12.0/24",
     "ip": "192.168.13.0/24"
 }
+```
+Refrensi:  https://github.com/c-robinson/iplib
 
-  https://github.com/c-robinson/iplib
+Hasil Test
+
+![](assets/postman-iplib-gin.png)
