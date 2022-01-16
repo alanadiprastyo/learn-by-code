@@ -3,8 +3,8 @@ module github.com/alanadiprastyo/learn-by-code
 go 1.16
 
 require (
-	github.com/c-robinson/iplib v1.0.3 // indirect
-	github.com/gin-gonic/gin v1.7.7 // indirect
+	github.com/c-robinson/iplib v1.0.3
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
